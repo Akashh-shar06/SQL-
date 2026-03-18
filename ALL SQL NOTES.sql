@@ -24,7 +24,7 @@ Truncate table student;
 (ERASE THE ALL THE DATA OF ROW)
 
 
------------------------ DROP for everything deleted with [data | Structure] ------------------------------
+--------------------------- DROP for everything deleted with [data | Structure] ------------------------------
 Drop table Student;
 (ERASE ALL THE DATABASE)
 
@@ -47,7 +47,7 @@ Select * from student where mathsmarks between 50 and 100;
 (GIVES FROM THE PARTICULAR COLUMN RANGE WISE MARKSOR ANYTHING)
 ---
 
-------------------------- SEARCH ---------------------------------
+------------------------- SEARCH ---------------------------
 
 ----- LIKE
 
@@ -79,5 +79,110 @@ SELECT * FROM STUDENT WHERE DIVISION IN ('A','B');
 SELECT * FROM STUDENT WHERE DIVISION NOT IN ('A','B');
 (REMOVE THE VALUE THAT YOU INPUT THE IN VALUE)
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+----------------------- Aggreagte Functions -----------------------
 
-ALTER FOR ADD
+1. Aggregate Functions (Basic)
+
+These functions work on multiple rows and return one result.
+
+✅ SUM(SALARY)
+SELECT SUM(SALARY) AS TOTAL_SALARY FROM Employees;
+
+👉 Adds all salary values together
+💡 Example:
+10000 + 20000 + 30000 = 60000
+✔ Gives total salary of all employees
+------------------------------------------------------------------------------
+✅ COUNT(SALARY)
+SELECT COUNT(SALARY) AS TOTAL_EMPLOYEES FROM Employees;
+
+👉 Counts only non-null salary values
+💡 If data:
+
+10000
+20000
+NULL
+30000
+
+👉 Output = 3 (NULL is ignored)
+------------------------------------------------------------------------------
+✅ COUNT(*)
+SELECT COUNT(*) AS TOTAL_EMPLOYEES FROM Employees;
+
+👉 Counts all rows, including NULL
+💡 Same data:
+
+10000
+20000
+NULL
+30000
+
+👉 Output = 4
+✔ Best way to count total employees
+----------------------------------------------------------------------------
+✅ AVG(SALARY)
+SELECT AVG(SALARY) AS AVG_SALARY FROM Employees;
+
+👉 Finds average (mean)
+💡 Formula:
+
+SUM / COUNT (ignores NULL)
+
+Example:
+
+10000 + 20000 + 30000 = 60000
+60000 / 3 = 20000
+------------------------------------------------------------------------------
+✅ MIN(SALARY)
+SELECT MIN(SALARY) AS MINIMUM_SALARY FROM Employees;
+
+👉 Finds smallest salary
+
+✅ MAX(SALARY)
+SELECT MAX(SALARY) AS MAXIMUM_SALARY FROM Employees;
+
+👉 Finds highest salary
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+🔹 2. GROUP BY (Very Important)
+
+👉 Used when you want results category-wise
+
+Example:
+SELECT DEPARTMENT, SUM(SALARY)
+FROM Employees
+GROUP BY DEPARTMENT;
+
+👉 Meaning:
+
+Divide employees by department
+
+Then calculate total salary for each department
+
+💡 Output:
+
+HR        → 50000
+IT        → 120000
+Sales     → 80000
+More examples:
+🔸 Average salary per department SELECT DEPARTMENT, AVG(SALARY) FROM Employees GROUP BY DEPARTMENT;
+🔸 Minimum salary per department SELECT DEPARTMENT, MIN(SALARY) FROM Employees GROUP BY DEPARTMENT;
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+🔹 3. HAVING (Filter on Groups)
+
+👉 HAVING is like WHERE but works after GROUP BY
+
+Example:
+SELECT DEPARTMENT, SUM(SALARY) FROM Employees GROUP BY DEPARTMENT HAVING SUM(SALARY) > 150000;
+
+👉 Meaning:
+First group by department
+Then show only those departments where total salary > 150000
+
+💡 Output:
+
+IT → 200000 ✔
+Sales → 120000 ❌ (removed)
