@@ -186,3 +186,54 @@ Then show only those departments where total salary > 150000
 
 IT → 200000 ✔
 Sales → 120000 ❌ (removed)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+THIS IS MATH FUNCTION :-
+  
+SELECT 
+    ABS(-25) AS ABS_Value,
+    CEILING(4.2) AS Ceiling_Value,
+    FLOOR(4.8) AS Floor_Value,
+    ROUND(123.456, 2) AS Round_2_Decimals,
+    ROUND(123.456, 0) AS Round_Whole,
+	ROUND(123.456, 2, 1) AS Round_2_Truncates,
+	ROUND(123.456, 2, 0) AS Round_2_Default_Round,
+    POWER(2, 3) AS Power_Value,
+    SQRT(16) AS Square_Root,
+	SQUARE(5) AS Square_function,
+    RAND() AS Random_Number,
+    LOG(10) AS Log_Value,
+    EXP(2) AS Exp_Value,
+    PI() AS Pi_Value,
+    SIGN(10) AS Sign_Positive,
+	SIGN(-10) AS Sign_Negative,
+	SIGN(0) AS Sign_Netural;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+THIS IS STRING FUNCTION :-   
+
+SELECT 
+    '   Hello World   ' AS Original_String,
+
+    LEN('Hello') AS Length_Value,
+    UPPER('hello') AS Uppercase_Value,
+    LOWER('HELLO') AS Lowercase_Value,
+
+    LTRIM('   Hello') AS Left_Trim,
+    RTRIM('Hello   ') AS Right_Trim,
+    TRIM('   Hello   ') AS Full_Trim,
+
+    SUBSTRING('Hello World', 1, 5) AS Sub_String,
+    CHARINDEX('World', 'Hello World') AS Char_Index,
+
+    REPLACE('Hello World', 'World', 'SQL') AS Replace_Value,
+
+    CONCAT('Hello', ' - ', ' &&&--','World') AS Concatenated_Value,
+	'Hello' + ' ' + 'World' AS Manual_Concate,
+
+    LEFT('Hello World', 5) AS Left_Value,
+    RIGHT('Hello World', 5) AS Right_Value,
+
+    REVERSE('Hello') AS Reverse_Value,
+
+    FORMAT(GETDATE(), 'MM-dd-yyyy') AS Formatted_Date;
