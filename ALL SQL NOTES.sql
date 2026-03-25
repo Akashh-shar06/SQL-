@@ -237,3 +237,110 @@ SELECT
     REVERSE('Hello') AS Reverse_Value,
 
     FORMAT(GETDATE(), 'MM-dd-yyyy') AS Formatted_Date;
+
+
+---------------------- JOIN--- a JOIN is used to combine rows from two or more tables based on a related column between them.
+	What is a JOIN?
+
+	A JOIN retrieves data from multiple tables by linking them using a common column (usually a key).
+
+	👉 Example idea:
+	You have:
+
+	Employees table (Employee details)
+	Departments table (Department info)
+
+	JOIN helps you see which employee belongs to which department.
+
+========================================================================================================================================================================================		
+
+CREATE TABLE Departments (
+    DeptID INT PRIMARY KEY,
+    DeptName VARCHAR(50)
+);
+
+INSERT INTO Departments VALUES
+(1, 'HR'),
+(2, 'IT'),
+(3, 'Finance'),
+(4, 'Marketing'),
+(5, 'Sales'),
+(6, 'Admin'),
+(7, 'Legal'),
+(8, 'R&D'),
+(9, 'Support'),
+(10, 'Logistics');
+
+CREATE TABLE Employees (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    DeptID INT
+);
+
+INSERT INTO Employees VALUES
+(101, 'Amit', 1),
+(102, 'Neha', 2),
+(103, 'Raj', 3),
+(104, 'Priya', 4),
+(105, 'Karan', 5),
+(106, 'Sneha', 2),
+(107, 'Vikas', 8),
+(108, 'Anjali', NULL),
+(109, 'Rohit', 15),  -- No matching dept
+(110, 'Meena', 3);
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------- INNER JOIN --- Returns only matching records
+SELECT E.EmpName, D.DeptName
+FROM Employees E
+INNER JOIN Departments D
+ON E.DeptID = D.DeptID;
+
+
+----------------- LEFT JOIN --- All employees + matching departments
+SELECT E.EmpName, D.DeptName
+FROM Employees E
+LEFT JOIN Departments D
+ON E.DeptID = D.DeptID;
+
+
+---------- LEFT JOINS AS RIGHT JOIN
+SELECT E.EmpName, D.DeptName
+FROM Departments D
+LEFT JOIN Employees E
+ON E.DeptID = D.DeptID;
+
+
+---------------- RIGHT JOIN --- All departments + matching employees
+SELECT E.EmpName, D.DeptName
+FROM Employees E
+RIGHT JOIN Departments D
+ON E.DeptID = D.DeptID;
+
+
+----------- RIGHT JOIN AS LEFT JOIN
+SELECT E.EmpName, D.DeptName
+FROM Departments D
+RIGHT JOIN Employees E
+ON E.DeptID = D.DeptID;
+
+
+---------------- FULL OUTER JOIN  --- All records from both tables
+SELECT E.EmpName, D.DeptName
+FROM Employees E
+FULL OUTER JOIN Departments D
+ON E.DeptID = D.DeptID;
+
+
+--------------- CROSS JOIN  --- Every employee with every department
+SELECT E.EmpName, D.DeptName
+FROM Employees E
+CROSS JOIN Departments D;
+
+
+--------------- SELF JOIN  --- Table joined with itself
+SELECT A.EmpName AS Employee1, B.EmpName AS Employee2, A.DeptID
+FROM Employees A
+JOIN Employees B
+ON A.DeptID = B.DeptID
+AND A.EmpID <> B.EmpID;	
