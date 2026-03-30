@@ -338,6 +338,87 @@ FROM Employees E
 CROSS JOIN Departments D;
 
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------ SUBQUERIES ----------------------------------------------------------
+
+-- Subquery in WHERE (Single Value) -- Find students who paid more than the average payment
+
+SELECT FullName, StudentID
+FROM Students
+WHERE StudentID IN (
+    SELECT StudentID
+    FROM Payments
+    WHERE AmountPaid > (
+        SELECT AVG(AmountPaid) FROM Payments
+    )
+);
+
+
+-- Subquery with IN --- Find students enrolled in Data Science or Python Programming
+
+SELECT FullName
+FROM Students
+WHERE CourseID IN (
+    SELECT CourseID
+    FROM Courses
+    WHERE CourseName IN ('Data Science', 'Python Programming')
+);
+
+
+-- Subquery with EXISTS --- Find students who have made at least one payment 
+
+
+SELECT FullName
+FROM Students S
+WHERE EXISTS (
+    SELECT 1
+    FROM Payments P
+    WHERE P.StudentID = S.StudentID
+);
+
+-- Subquery in FROM (Derived Table)  --- Find average payment per student
+
+SELECT StudentID, AVG(AmountPaid) AS AvgPayment
+FROM (
+    SELECT StudentID, AmountPaid
+    FROM Payments
+) AS Temp
+GROUP BY StudentID;
+
+
+-- Subquery with = (Single Row Subquery) --- Find student who paid the highest amount
+
+SELECT FullName
+FROM Students
+WHERE StudentID = (
+    SELECT StudentID
+    FROM Payments
+    WHERE AmountPaid = (
+        SELECT MAX(AmountPaid) FROM Payments
+    )
+);
+
+
+--  Correlated Subquery --- Find students who paid full course fees
+
+SELECT FullName
+FROM Students S
+WHERE (
+    SELECT AmountPaid
+    FROM Payments P
+    WHERE P.StudentID = S.StudentID
+) = (
+    SELECT Fees
+    FROM Courses C
+    WHERE C.CourseID = S.CourseID
+);
+
+
+-- 
+
+
+
 --------------- SELF JOIN  --- Table joined with itself
 SELECT A.EmpName AS Employee1, B.EmpName AS Employee2, A.DeptID
 FROM Employees A
