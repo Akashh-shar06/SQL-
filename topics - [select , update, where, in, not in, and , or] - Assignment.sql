@@ -22,7 +22,7 @@ INSERT INTO Employees VALUES
 (10, 'Fiona', 'Nelson', 33, 'HR', 59000, 'New York');
 
 -- 1. Employees whose age is between 30 and 40 and department is not Marketing
-SELECT * FROM Employees WHERE Age BETWEEN 30 AND 40;
+SELECT * FROM Employees WHERE Department NOT IN ('Marketing') AND Age BETWEEN 30 AND 40;
 
 -- 2. Employees whose FirstName starts with "J" and Salary greater than 50000
 SELECT * FROM Employees WHERE FirstName LIKE 'J%'AND Salary > 50000;
