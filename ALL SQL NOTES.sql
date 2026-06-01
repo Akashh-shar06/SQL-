@@ -414,14 +414,294 @@ WHERE (
     WHERE C.CourseID = S.CourseID
 );
 
-
--- 
-
-
-
 --------------- SELF JOIN  --- Table joined with itself
+
 SELECT A.EmpName AS Employee1, B.EmpName AS Employee2, A.DeptID
 FROM Employees A
 JOIN Employees B
 ON A.DeptID = B.DeptID
 AND A.EmpID <> B.EmpID;	
+
+
+
+------------------------------------------------ window functions ---------------------------------------------
+
+-- Create Employees Table
+CREATE TABLE Employees (
+    EmpID INT,
+    EmployeeName VARCHAR(50),
+    Department VARCHAR(50),
+    Salary INT
+);
+
+-- Insert Sample Data
+INSERT INTO Employees VALUES
+(1, 'John', 'IT', 90000),
+(2, 'Mike', 'IT', 85000),
+(3, 'Sara', 'HR', 85000),
+(4, 'Tom', 'HR', 80000),
+(5, 'Emma', 'Finance', 75000),
+(6, 'David', 'Finance', 70000),
+(7, 'Alex', 'IT', 90000),       -- same salary as John
+(8, 'Sophia', 'IT', 85000),     -- same salary as Mike
+(9, 'Liam', 'HR', 80000),       -- same salary as Tom
+(10, 'Noah', 'HR', 80000),      -- duplicate salary again
+(11, 'Olivia', 'Finance', 75000), -- same salary as Emma
+(12, 'Ava', 'Finance', 70000),   -- same salary as David
+(13, 'Ethan', 'IT', 95000),     -- highest salary
+(14, 'Mia', 'IT', 60000),       -- lowest salary
+(15, 'Lucas', 'HR', 85000);     -- duplicate HR salary
+
+--------------------------------- window functions -------------------------------------------------
+
+CREATE TABLE daily_sales (
+    sale_date DATE,
+    product_name VARCHAR(50),
+    units_sold INT,
+    unit_price DECIMAL(10,2),
+    total_sales DECIMAL(10,2)
+);
+
+INSERT INTO daily_sales (sale_date, product_name, units_sold, unit_price, total_sales)
+VALUES
+('2026-05-20', 'T-Shirt', 15, 499.00, 7485.00),
+('2026-05-21', 'Jeans', 8, 1299.00, 10392.00),
+('2026-05-22', 'Sneakers', 5, 2499.00, 12495.00),
+
+('2026-05-23', 'Hoodie', 10, 899.00, 8990.00),
+('2026-05-24', 'Cap', 20, 199.00, 3980.00),
+('2026-05-25', 'Jacket', 6, 1999.00, 11994.00),
+
+('2026-05-26', 'T-Shirt', 12, 499.00, 5988.00),
+('2026-05-27', 'Sneakers', 7, 2499.00, 17493.00);
+
+
+INSERT INTO daily_sales (sale_date, product_name, units_sold, unit_price, total_sales)
+VALUES
+('2026-05-20', 'T-Shirt', 10, 500.00, 5000.00),
+('2026-05-21', 'T-Shirt', 12, 500.00, 6000.00),
+('2026-05-22', 'T-Shirt', 15, 500.00, 7500.00),
+('2026-05-23', 'T-Shirt', 20, 500.00, 10000.00),
+('2026-05-24', 'T-Shirt', 18, 500.00, 9000.00),
+
+('2026-05-20', 'Jeans', 5, 1200.00, 6000.00),
+('2026-05-21', 'Jeans', 6, 1200.00, 7200.00),
+('2026-05-22', 'Jeans', 7, 1200.00, 8400.00),
+('2026-05-23', 'Jeans', 8, 1200.00, 9600.00),
+('2026-05-24', 'Jeans', 10, 1200.00, 12000.00);
+
+
+--------------- ROW_NUMBER() - Assigns a unique sequential number to each row.
+
+SELECT 
+    EmployeeName,
+    Salary,
+    ROW_NUMBER() OVER (ORDER BY Salary DESC) AS RowNum
+FROM Employees;
+
+--------------- RANK() -- Assigns rank with gaps when ties occur.
+
+SELECT 
+    EmployeeName,
+    Salary,
+    RANK() OVER (ORDER BY Salary DESC) AS RankNum
+FROM Employees;
+
+
+--------------- DENSE_RANK()  --- Assigns rank without gaps.
+
+SELECT 
+    EmployeeName,
+    Salary,
+    DENSE_RANK() OVER (ORDER BY Salary DESC) AS DenseRankNum
+FROM Employees;
+
+
+--------------- NTILE()  --- Divides rows into groups.
+
+SELECT 
+    EmployeeName,
+    Salary,
+    NTILE(5) OVER (ORDER BY Salary DESC) AS GroupNo
+FROM Employees;
+
+
+-------------- SUM() OVER()  --- Running total or grouped total.
+
+SELECT
+    EmployeeName,
+    Salary,
+    SUM(Salary) OVER() AS TotalSalary
+FROM Employees;
+
+
+SELECT
+    EmployeeName,
+    Salary,
+    SUM(Salary) OVER(ORDER BY Salary) AS RunningTotal
+FROM Employees;
+
+
+SELECT
+    sale_date,
+    product_name,
+    units_sold,
+    unit_price,
+    total_sales,
+    SUM(total_sales) OVER() AS TotalSalesAllDays
+FROM daily_sales;
+
+
+SELECT
+    sale_date,
+    product_name,
+	total_sales,
+    SUM(total_sales) OVER(ORDER BY sale_date) AS RunningTotalSales
+FROM daily_sales;
+
+
+--------------- MAX() OVER()  --  Finds maximum value.
+
+SELECT
+    EmployeeName,
+    Salary,
+    MAX(Salary) OVER() AS MaxSalary
+FROM Employees;
+
+
+--------------- LAG() --- Gets previous row value.
+
+SELECT
+    sale_date,
+    total_sales,
+    LAG(total_sales) OVER(
+       ORDER BY sale_date
+    ) AS prev_sales_same_product
+FROM daily_sales;
+
+
+SELECT
+    sale_date,
+    product_name,
+    total_sales,
+    LAG(total_sales) OVER(
+        PARTITION BY product_name
+        ORDER BY sale_date
+    ) AS prev_sales_same_product
+FROM daily_sales;
+
+
+----------------------- LEAD()  --- Gets next row value.
+
+-- LEAD() on daily_sales (Next Sales Value)
+
+SELECT
+    sale_date,
+    product_name,
+    total_sales,
+    LEAD(total_sales) OVER(ORDER BY sale_date) AS next_day_sales
+FROM daily_sales;
+
+
+-- next_sales_same_product
+
+SELECT
+    sale_date,
+    product_name,
+    total_sales,
+    LEAD(total_sales) OVER(
+        PARTITION BY product_name
+        ORDER BY sale_date
+    ) AS next_sales_same_product
+FROM daily_sales;
+
+
+-- Difference with next day:
+
+SELECT
+    sale_date,
+    product_name,
+    total_sales,
+    LEAD(total_sales) OVER(ORDER BY sale_date) AS next_day_sales,
+    LEAD(total_sales) OVER(ORDER BY sale_date) - total_sales AS sales_gap
+FROM daily_sales;
+
+
+-------------- FIRST_VALUE() --- Returns first value in window.
+
+SELECT
+    EmployeeName,
+    Salary,
+    FIRST_VALUE(Salary) OVER(ORDER BY Salary DESC) AS HighestSalary
+FROM Employees;
+
+/*
+--- LAST_VALUE()  --- Returns last value in window.
+
+SELECT
+    EmployeeName,
+    Salary,
+    LAST_VALUE(Salary) OVER(
+        ORDER BY Salary
+        ROWS BETWEEN UNBOUNDED PRECEDING 
+        AND UNBOUNDED FOLLOWING
+    ) AS LastSalary
+FROM Employees;
+*/
+
+-------------------		PERCENT_RANK()  --- Returns percentage rank.
+
+
+-- PERCENT_RANK() on daily_sales
+
+SELECT
+    sale_date,
+    product_name,
+    total_sales,
+    PERCENT_RANK() OVER(ORDER BY total_sales) AS percent_rank
+FROM daily_sales;
+
+---- percent_rank_per_product
+
+SELECT
+    sale_date,
+    product_name,
+    total_sales,
+    PERCENT_RANK() OVER(
+        PARTITION BY product_name
+        ORDER BY total_sales
+    ) AS percent_rank_per_product
+FROM daily_sales;
+
+/*
+ PERCENTILE_CONT()  --  Continuous percentile. | PERCENTILE_DISC()
+ ????????????
+ */
+
+
+
+ ------------ PARTITION BY
+
+ SELECT
+    Department,
+    EmployeeName,
+    Salary,
+    SUM(Salary) OVER(PARTITION BY Department) AS DeptTotal
+FROM Employees;
+
+
+
+--------------- ROWS BETWEEN Example  --- Moving average of 3 rows
+
+SELECT
+    sale_date,
+    product_name,
+    total_sales,
+    AVG(total_sales) OVER(
+        ORDER BY sale_date
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS moving_avg
+FROM daily_sales;
+
+
+select * from Employees;
