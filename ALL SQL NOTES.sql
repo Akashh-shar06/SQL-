@@ -422,7 +422,98 @@ JOIN Employees B
 ON A.DeptID = B.DeptID
 AND A.EmpID <> B.EmpID;	
 
+------------------------------------------------------------------------- VIEWS -----------------------------------------------------------------
 
+------------ SIMPLE VIEW
+
+CREATE VIEW EmployeeView AS
+SELECT EmpID, EmpName, Salary
+FROM Employees;
+
+
+SELECT * FROM EmployeeView;
+
+
+-------------- View with JOIN
+
+CREATE VIEW EmployeeDepartmentView AS
+SELECT 
+    e.EmpID,
+    e.EmpName,
+    d.DepartmentName,
+    e.Salary
+FROM Employees e
+JOIN Departments d 
+ON e.DepartmentID = d.DepartmentID;
+
+
+SELECT * FROM EmployeeDepartmentView;
+
+
+-------------- View with Multiple Tables
+
+CREATE VIEW EmployeeProjectView AS
+SELECT 
+    e.EmpName,
+    p.ProjectName,
+    p.HoursWorked
+FROM Employees e
+JOIN Projects p 
+ON e.EmpID = p.EmpID;
+
+
+SELECT * FROM EmployeeProjectView;
+
+
+
+------------  View with Aggregation
+
+
+CREATE VIEW ProjectHoursView AS
+SELECT 
+    ProjectName,
+    SUM(HoursWorked) AS TotalHours
+FROM Projects
+GROUP BY ProjectName;
+
+
+
+SELECT * FROM ProjectHoursView;
+
+
+
+------- INSERT into View
+
+INSERT INTO EmployeeView (EmpID, EmpName, Salary)
+VALUES (6, 'David Miller', 65000);
+
+
+--- UPDATE, DELETE, DROP IS VALID IN VIEW ONLY IF ITS CREATED WITH ONE TABLE WITHOUT[AGGRE, JOINS, ETC]
+
+
+--------------- Modify a View
+
+ALTER VIEW EmployeeView AS
+SELECT EmpID, EmpName
+FROM Employees;			
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE VIEW EmployeeFullDetails AS
+SELECT 
+    e.EmpName,
+    d.DepartmentName,
+    p.ProjectName,
+    p.HoursWorked
+FROM Employees e
+JOIN Departments d 
+    ON e.DepartmentID = d.DepartmentID
+JOIN Projects p 
+    ON e.EmpID = p.EmpID;
+
+SELECT *
+FROM EmployeeFullDetails
+WHERE HoursWorked > 100;
 
 ------------------------------------------------ window functions ---------------------------------------------
 
@@ -677,7 +768,6 @@ FROM daily_sales;
  PERCENTILE_CONT()  --  Continuous percentile. | PERCENTILE_DISC()
  ????????????
  */
-
 
 
  ------------ PARTITION BY
